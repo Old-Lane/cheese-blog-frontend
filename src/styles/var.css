@@ -1,0 +1,9 @@
+:root {
+    --dark-bg-color: #101014;
+    --light-bg-color: #f4f5f5;
+    --grey-font-color: #b2b5b7;
+
+    /*naive-ui*/
+    /*--primary-color-hover: #7c7d7e*/
+    --primary-color-hover: #f6b545
+}

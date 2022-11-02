@@ -1,0 +1,11 @@
+$light_base_background: #f4f5f5; //亮色基底颜色
+$dark_base_background: #282b34; //暗色基底颜色
+$light_hover_color: skyblue; //hover颜色
+$dark_hover_color: #ffffff;
+
+
+:export {
+  lightBaseBackground: $light_base_background;
+  darkBaseBackground: $dark_base_background;
+  hover_color: $light_hover_color;
+}
