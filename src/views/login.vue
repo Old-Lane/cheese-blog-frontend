@@ -266,11 +266,11 @@ const handleLogin = (e: MouseEvent) => {
 
 console.log(redirect.value)
 
-const getUserInfo = () => {
+/* const getUserInfo = () => {
   getUserInfoApi().then(res => {
     Cookies.set()
   })
-}
+} */
 
 
 </script>

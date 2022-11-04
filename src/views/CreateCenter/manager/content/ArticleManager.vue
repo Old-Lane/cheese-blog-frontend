@@ -1,9 +1,9 @@
 <script setup lang='ts'>
+import { getArticleList } from '@/api/Article';
 import { MenuOption } from 'naive-ui/es/menu/src/interface';
 const a = ref('0')
-const activeKey = ref<string | null>('all')
+const activeKey = ref<string>('all')
 const search = ref('')
-
 
 const menuOptions = ref<MenuOption[]>([
   {
@@ -14,11 +14,11 @@ const menuOptions = ref<MenuOption[]>([
     label: '公开可见 ' + a.value,
     key: 'public'
   }
-  ,{
+  , {
     label: '仅我可见 ' + a.value,
     key: 'private'
   }
-  ,{
+  , {
     label: '审核 ' + a.value,
     key: 'audit'
   },
@@ -32,10 +32,17 @@ const menuOptions = ref<MenuOption[]>([
   }
 ])
 
+let article = reactive({})
+
+onMounted(() => {
+  getArticleList(activeKey.value).then(res => {
+    article = res.data
+  })
+})
+
 const handleUpdateValue = (key: string, item: MenuOption) => {
   activeKey.value = key
 }
-
 
 </script>
 
@@ -53,6 +60,7 @@ const handleUpdateValue = (key: string, item: MenuOption) => {
       </n-input>
     </div>
   </div>
+
 </template>
 
 <style lang='scss'>

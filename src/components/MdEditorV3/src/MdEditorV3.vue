@@ -2,7 +2,7 @@
 import MdEditor, { ToolbarNames } from "md-editor-v3";
 import "md-editor-v3/lib/style.css";
 import EmojiExtension from '@/components/MdEditorV3/src/EmojiExtension/index.vue';
-import { draft } from "@/api/Article";
+import { saveArticleApi } from "@/api/Article";
 import { useArticleStore } from "@/store/modules/article";
 import { storeToRefs } from "pinia";
 
@@ -55,7 +55,7 @@ const onChange = (v: string) => {
   emit('getContent', v)
 }
 
-const onUploadImg = (val) => {
+const onUploadImg = (val : any) => {
 }
 
 //保存至草稿箱
@@ -63,7 +63,7 @@ const codeSave = () => {
   if (state.text === '') {
     message.warning('文章内容不能为空！')
   } else {
-    draft({ content: state.text }).then(res => {
+    saveArticleApi({ content: state.text }).then(res => {
       message.success(res.message)
     })
   }

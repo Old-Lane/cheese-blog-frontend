@@ -55,7 +55,7 @@ watch(
       greetings.value = '上午好！'
     } else if (newVal >= 11 && newVal < 13) {
       greetings.value = '中午好！'
-    } else if (newVal >= 13 && newVal <= 19) {
+    } else if (newVal >= 13 && newVal < 19) {
       greetings.value = '下午好！'
     } else {
       greetings.value = '晚上好！'
