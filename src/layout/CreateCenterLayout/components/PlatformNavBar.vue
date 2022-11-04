@@ -2,15 +2,20 @@
 import { ThemeSwitch } from "@/components/ThemeSwitch";
 import { useRouter } from "vue-router";
 const { push } = useRouter()
+
+const toIndex = (event : MouseEvent) : MouseEvent => {
+  push('/')
+  return event
+}
 </script>
 
 <template>
   <div class="flex justify-between items-center w-100">
-    <div class="flex justify-between items-center mr-10 cursor-pointer">
+    <div class="flex justify-between items-center mr-10 cursor-pointer" @click="push('/platform/home')">
       <SvgIcon :size="30" name="cheese" class="cursor-pointer mr-2" />
       <span class="select-none text-3xl font-bold">创作中心</span>
     </div>
-    <div class="cursor-pointer" @click="push('/')">主站</div>
+    <div class="cursor-pointer" @click="toIndex">主站</div>
   </div>
   <div class="flex items-center w-80 justify-between">
     <div class=" login cursor-pointer w-auto flex items-center justify-between ">

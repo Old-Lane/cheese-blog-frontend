@@ -1,31 +1,16 @@
 <script setup lang='ts'>
 import { draftApi, saveArticleApi } from '@/api/Article';
-import { getCategoryListByUid } from '@/api/classify';
+import { getCategoryListApi, getCategoryListByUid } from '@/api/classify';
+import { TagSelector } from '@/components/TagSelector';
+import { useArticleStore } from '@/store/modules/article';
 import { FormInst, FormItemRule, FormRules } from 'naive-ui/es/form/src/interface';
+import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
 
 const message: any = inject('message')
+const dialog: any = inject('dialog')
 
 const addType = ref('')
-const addCType = ref('')
 const category = ref([])
-const tagList = ref([
-  {
-    id: '1',
-    name: '前端',
-    type: 'default'
-  },
-  {
-    id: '2',
-    name: '后端',
-    type: 'default'
-  },
-  {
-    id: '3',
-    name: '大数据',
-    type: 'default'
-  }
-])
-const tagNameList = ref<string[]>([])
 
 const article = reactive({
   title: '',
@@ -40,66 +25,35 @@ const article = reactive({
   status: <unknown>null
 })
 
+//用户的分类专栏
+const categoryList = ref([])
+const isSave = useArticleStore()
 watch(
   () => category.value[0],
   newVal => {
-    console.log(123);
     article.categoryName = newVal
   }
 )
 
-
-
-//用户的分类专栏
-const categoryList = ref([
-  {
-    id: '1',
-    name: '前端'
-  },
-  {
-    id: '2',
-    name: '后端'
-  }
-])
-
 onMounted(() => {
-  /* getCategoryListByUid().then(res => {
+  getCategoryListApi().then(res => {
     categoryList.value = res.data
-  }) */
+  })
+  window.addEventListener("beforeunload", tip, false)
 })
 
-
-const handleDelTag = (index: number, name: string) => {
-  tagNameList.value.splice(index, 1)
-  article.tagIdList.splice(index, 1)
-  for (let i = 0; i < tagList.value.length; i++) {
-    if (tagList.value[i].name === name) {
-      tagList.value[i].type = 'default'
-      break
-    }
-  }
-}
-
-const showSelector = ref(false)
-const handleAddTag = () => {
-  showSelector.value = true
-}
-
-const tagHandle = (index: number, name: string, id: string) => {
-  if (tagList.value[index].type === 'default') {
-    article.tagIdList.push(tagList.value[index].id)
-    tagNameList.value.push(tagList.value[index].name)
+const tip = (event: any) => {
+  if (article.content !== '' && !isSave.getIsSave) {
+    event.returnValue = '未保存'
   } else {
-    for (let i = 0; i < article.tagIdList.length; i++) {
-      if (article.tagIdList[i] === id) {
-        article.tagIdList.splice(i, 1)
-        tagNameList.value.splice(i, 1)
-      }
-    }
+    return false
   }
-  tagList.value[index].type = tagList.value[index].type === 'default' ? 'warning' : 'default'
 }
 
+
+const getTagIdList = (idList: any) => {
+  article.tagIdList = idList
+}
 
 const getContent = (content: string) => {
   article.content = content
@@ -111,8 +65,10 @@ const saveInDraft = () => {
     message.warning('文章内容不能为空！')
   } else {
     article.status = 0
+    console.log(222);
     saveArticleApi(article).then(res => {
       message.success(res.message)
+      isSave.setIsSave(true)
     })
   }
 }
@@ -156,11 +112,32 @@ const saveArticle = () => {
         article.status = 2
         saveArticleApi(article).then(res => {
           message.success(res.message)
+          isSave.setIsSave(true)
         })
       }
     })
   }
 }
+
+onBeforeRouteLeave((to, from, next) => {
+  if (article.content !== '' && !isSave.getIsSave) {
+    dialog.warning({
+      title: '警告',
+      content: '文章已编辑且尚未保存，您确定要离开嘛',
+      positiveText: '确定',
+      negativeText: '我再看看',
+      onPositiveClick: () => {
+        next()
+      },
+      onNegativeClick: () => {
+        return
+      }
+    })
+  } else {
+    next()
+  }
+})
+
 
 
 
@@ -199,47 +176,11 @@ const saveArticle = () => {
         </n-space>
       </n-form-item>
       <n-form-item label="文章标签：" path="">
-        <n-space>
-          <n-tag v-for="(tag, index) in tagNameList" type="warning" closable @close="handleDelTag(index, tag)">
-            {{ tag }}
-          </n-tag>
-
-          <div class="relative">
-            <div class="w-100vw h-100vh fixed z-0 top-0 left-0" v-if="showSelector" @click="showSelector = false"></div>
-            <div
-              class="w-130 min-h-50 z-10000 absolute bottom-12 left-0 light:bg-$light-card-color dark:bg-$dark-card-color rounded-lg"
-              v-show="showSelector && article.tagIdList.length < 5" style="box-shadow: 0 0 30px rgb(0 0 0 / 10%);">
-              <div class="py-2 text-center" style="border-bottom: 1px solid #efeff5;">标签</div>
-              <div class="px-3 py-1">
-                <n-scrollbar class="max-h-100" >
-                  <n-space>
-                  <n-tag v-for="(tag, index) in tagList" :type="tag.type" class="cursor-pointer"
-                    @click="tagHandle(index, tag.name, tag.id)">
-                    {{ tag.name }}
-                  </n-tag>
-                </n-space>
-                </n-scrollbar>
-                
-              </div>
-
-            </div>
-            <n-tag v-if="article.tagIdList.length < 5" :type="addCType" @mouseenter="addCType = 'warning'"
-              @mouseleave="addCType = ''" @click="handleAddTag" class="cursor-pointer relative">
-              ＋添加文章标签
-            </n-tag>
-          </div>
-
-        </n-space>
-
+        <TagSelector @getTagIdList="getTagIdList" />
       </n-form-item>
       <n-form-item label="分类专栏：" path="">
         <div>
-          <!-- <n-tag v-if="article.tagList.length < 5" :type="addType" @mouseenter="addType = 'warning'" @mouseleave="addType = ''"
-            @click="handleAddTag" class="cursor-pointer">
-            ＋新建分类专栏
-          </n-tag> -->
-          <!-- <n-tag>{{article.category[0]}}</n-tag> -->
-          <n-dynamic-tags v-model:value="category" :max="1">
+          <n-dynamic-tags v-model:value="category" :max="1" type="warning">
             <template #trigger="{ activate, disabled }">
               <n-button size="small" class="cursor-pointer" :disabled="disabled" :type="addType"
                 @mouseenter="addType = 'warning'" @mouseleave="addType = ''" @click="activate()">
@@ -251,10 +192,10 @@ const saveArticle = () => {
             style="border: 1px solid rgb(224, 224, 230)">
             <h1 class="text-xl  py-2" style="border-bottom: 1px solid rgb(224, 224, 230)">选择分类专栏</h1>
             <div class="mt-5">
-              <n-radio-group v-model:value="article.categoryName" name="category">
+              <n-radio-group v-model:value="category[0]" name="category">
                 <n-space>
-                  <n-radio v-for="categoryItem in categoryList" :key="categoryItem.id" :value="categoryItem.name">
-                    {{ categoryItem.name }}
+                  <n-radio v-for="categoryItem in categoryList" :key="categoryItem" :value="categoryItem">
+                    {{ categoryItem }}
                   </n-radio>
                 </n-space>
               </n-radio-group>

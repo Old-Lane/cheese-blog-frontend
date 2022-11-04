@@ -58,7 +58,7 @@ service.interceptors.request.use(
             });
         }
         // 添加请求头以及其他逻辑处理
-        console.log(getToken())
+        // console.log(getToken())
         config.headers['Authorization'] = getToken();  // 设置请求头
         return config;
     },

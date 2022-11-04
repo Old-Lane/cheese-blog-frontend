@@ -26,7 +26,12 @@ export const saveArticleApi = (article : object) => {
     })
 }
 
-export const getArticleList = (type: string) => {
+/**
+ * 获取文章
+ * @param type 文章类型
+ * @returns 
+ */
+export const getArticleListApi = (type: string) => {
     return request({
         url: import.meta.env.VITE_BASE_URL_CREATOR + '/article/list',
         method: 'get',

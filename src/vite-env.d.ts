@@ -17,6 +17,6 @@ declare module 'js-cookie'
 
 declare module 'axios' {
   interface AxiosInstance {
-    (config: AxiosRequestConfig): Promise<Result>
+    (config: AxiosRequestConfig): Promise<Result | any>
   }
 }

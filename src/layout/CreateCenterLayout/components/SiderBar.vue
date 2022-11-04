@@ -3,7 +3,8 @@ import {MenuOption} from 'naive-ui/es/menu/src/interface';
 import SvgIcon from '@/components/SvgIcon.vue'
 import { useRouter } from 'vue-router';
 
-const {push} = useRouter()
+const { push, currentRoute } = useRouter()
+const selectedKey = ref(currentRoute.value.path)
 
 const menuOptions = ref<MenuOption[]>([
   {
@@ -137,18 +138,18 @@ const menuOptions = ref<MenuOption[]>([
 ])
 
 const handleUpdateValue = (key: string, item: MenuOption) => {
-   push(key)
+  push(key)
 }
 
 </script>
 
 <template>
-  <n-menu :options="menuOptions" @update:value="handleUpdateValue"/>
+  <n-menu v-model:value="selectedKey" :options="menuOptions" @update:value="handleUpdateValue"/>
 </template>
 
 <style lang='scss'>
 .n-menu .n-menu-item-content {
   padding-right: 40px;
-  padding-left: 40px !important;
+  // padding-left: 40px !important;
 }
 </style>

@@ -17,10 +17,10 @@ const {push} = useRouter()
         </div>
         <SiderBar />
       </n-layout-sider>
-      <n-layout-content :native-scrollbar="false"
+      <n-layout-content :native-scrollbar="true"
         class="bg-$light-bg-color light:bg-$light-bg-color dark:bg-v-dark">
         <div style="background-color: rgba(0, 0, 0, 0);" class="relative mt-5 ml-10 !mr-10 w-98% !border-opacity-0">
-          <n-card class="mr-10 absolute min-h-255">
+          <n-card class="mr-10 absolute min-h-255 mb-10">
             <RouterView/>
           </n-card>
         </div>

@@ -46,6 +46,7 @@ declare module '@vue/runtime-core' {
     NRadioBu: typeof import('naive-ui')['NRadioBu']
     NRadioButton: typeof import('naive-ui')['NRadioButton']
     NRadioGroup: typeof import('naive-ui')['NRadioGroup']
+    NResult: typeof import('naive-ui')['NResult']
     NRow: typeof import('naive-ui')['NRow']
     NScrollbar: typeof import('naive-ui')['NScrollbar']
     NSpace: typeof import('naive-ui')['NSpace']
@@ -60,6 +61,7 @@ declare module '@vue/runtime-core' {
     RouterView: typeof import('vue-router')['RouterView']
     SvgIcon: typeof import('./src/components/SvgIcon.vue')['default']
     SwitchTheme: typeof import('./src/components/SwitchTheme.vue')['default']
+    TagSelector: typeof import('./src/components/TagSelector/src/TagSelector.vue')['default']
     ThemeSwitch: typeof import('./src/components/ThemeSwitch/src/ThemeSwitch.vue')['default']
   }
 }

@@ -1,6 +1,6 @@
 <template>
 
-  <div class="contain light:bg-$light-bg-color dark:bg-v-dark">
+  <div class="login-contain light:bg-$light-bg-color dark:bg-v-dark">
     <transition name="login-fade" mode="in-out">
       <n-card v-if="!isPasswordLogin">
         <div style="padding: 0 30px;">
@@ -276,7 +276,7 @@ console.log(redirect.value)
 </script>
 
 <style scoped lang="scss">
-.contain {
+.login-contain {
   //background-color: #ebeeef;
   display: flex; /*弹性布局*/
   flex-direction: row;
@@ -345,7 +345,7 @@ console.log(redirect.value)
 
 </style>
 <style>
-.contain .n-card > .n-card__content {
+.login-contain .n-card > .n-card__content {
   padding: 0 !important;
 }
 </style>

@@ -48,7 +48,8 @@ const state = reactive({
   modalFullscreen: false
 });
 
-const emit = defineEmits(['getContent']);
+const emit = defineEmits(['getContent'])
+const isSave = useArticleStore()
 
 const onChange = (v: string) => {
   state.text = v
@@ -63,9 +64,12 @@ const codeSave = () => {
   if (state.text === '') {
     message.warning('文章内容不能为空！')
   } else {
-    saveArticleApi({ content: state.text }).then(res => {
+    /* saveArticleApi({ content: state.text }).then(res => {
       message.success(res.message)
-    })
+      isSave.setIsSave(true)
+    }) */
+    isSave.setIsSave(true)
+
   }
 
 }
