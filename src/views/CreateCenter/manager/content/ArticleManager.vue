@@ -3,27 +3,15 @@ import { getArticleListApi } from '@/api/Article';
 import { MenuOption } from 'naive-ui/es/menu/src/interface';
 import { useRouter } from 'vue-router';
 
-interface ArticleType {
-  all: number,
-  public: number,
-  private: number,
-  audit: number,
-  draft: number,
-  deleted: number
-}
-
-const {push} = useRouter()
-const count = ref<ArticleType>({
-  all: 0,
-  public: 0,
-  private: 0,
-  audit: 0,
-  draft: 0,
-  deleted: 0
-})
+const { push } = useRouter()
+const count = ref<ArticleType>({})
 const activeKey = ref<string>('all')
 const search = ref('')
-const article = ref([])
+const article = ref<Article[]>([])
+const pageNum = ref(1)
+const pageSize = ref(10)
+const pageCount = ref<number>(0)
+const total = ref<number>(0)
 
 const menuOptions = ref<MenuOption[]>([
   {
@@ -60,18 +48,22 @@ const menuOptions = ref<MenuOption[]>([
 
 
 onMounted(() => {
-  getArticleList()
+  getArticleList(pageSize.value, pageNum.value)
 })
 
 
 const handleUpdateValue = (key: string, item: MenuOption) => {
   activeKey.value = key
-  getArticleList()
+  getArticleList(pageSize.value, pageNum.value)
 }
 
-const getArticleList = () => {
-  getArticleListApi(activeKey.value).then(res => {
+const getArticleList = (ps: number, pn: number) => {
+  getArticleListApi(activeKey.value, ps, pn).then(res => {
     article.value = res.data.list
+    pageCount.value = res.data.pageInfo.pages
+    pageNum.value = pn
+    pageSize.value = ps
+    total.value = res.data.pageInfo.total
     const counts = res.data.count
     for (const key in counts) {
       for (let i = 0; i < menuOptions.value.length; i++) {
@@ -84,16 +76,44 @@ const getArticleList = () => {
   })
 }
 
+const edit = (id: string | undefined) => {
+  push(
+    {
+      name: 'Editor',
+      params: {
+        id: id
+      }
+    })
+}
+
+const toArticleDetail = (id: string | undefined) => {
+  push({
+    name: 'ArticleDetail',
+    params: {
+      id: id
+    }
+  })
+}
+
+//分页
+const pageArticle = (page: number) => {
+  getArticleList(pageSize.value, page)
+}
+const pageSizeArticle = (pageSize: number) => {
+  getArticleList(pageSize, pageNum.value)
+}
+
+
 </script>
 
 <template>
-  <div class="box flex justify-between items-center mt-2">
+  <div class="flex mt-2 box justify-between items-center">
     <n-menu @update:value="handleUpdateValue" v-model:value="activeKey" mode="horizontal" :options="menuOptions" />
     <div>
       <n-input placeholder="搜索文章" v-model:value="search" class="w-200">
         <template #suffix>
           <span
-            class="cursor-pointer hover:bg-gray-200 transition-all duration-300 w-12 h-12 rounded-1/5 flex items-center justify-center">
+            class="cursor-pointer flex rounded-1/5 h-12 transition-all w-12 duration-300 items-center justify-center hover:bg-gray-200">
             <SvgIcon name="search" />
           </span>
         </template>
@@ -110,18 +130,19 @@ const getArticleList = () => {
   </div>
 
   <div class="pt-5 pb-10" v-else>
-    <div v-for="item in article" class="w-80% h-62 py-5 flex"
+    <div v-for="item in article" class="flex h-62 py-5 w-80%"
       style="border-bottom: rgba(221, 221, 221, 0.4) 1px solid;">
-      <div v-if="item.cover" class="h-full w-28/100 pr-0">
-        <n-image class="w-full h-full " :src="item.cover" object-fit="cover" />
+      <div v-if="item.cover" class="h-full pr-0 w-26/100">
+        <n-image class="h-full w-90" :src="item.cover" object-fit="cover" />
       </div>
-      <div class="w-full h-100% flex flex-col">
-        <div class="flex justify-between mb-5">
+      <div class="flex flex-col h-100% w-full">
+        <div class="flex mb-5 justify-between">
           <div class="flex">
-            <n-button text class="text-3xl mr-5">{{ item.title }}</n-button>
+            <n-button @click="edit(item.id)" text class="mr-5 text-3xl">{{ item.title }}</n-button>
             <div class="flex justify-between">
               <n-tag v-if="item.status === 0" size="small" class="mr-2"> 草稿 </n-tag>
               <n-tag v-if="item.source === 0" size="small" type="warning"> 原创 </n-tag>
+              <n-tag v-if="item.audit === 0" size="small" type="warning"> 审核中 </n-tag>
             </div>
           </div>
           <div class="text-xl text-gray-400">{{ item.createTime }}</div>
@@ -134,7 +155,7 @@ const getArticleList = () => {
           <div v-else>
             暂未设置摘要
           </div>
-          
+
         </div>
         <div class="flex justify-between">
           <div class="flex text-gray-400">
@@ -155,16 +176,18 @@ const getArticleList = () => {
             </div>
           </div>
           <div class="flex w-45 justify-between">
-            <n-button text>编辑</n-button>
-            <n-button text>预览</n-button>
+            <n-button text @click="edit(item.id)">编辑</n-button>
+            <n-button text @click="toArticleDetail(item.id)">预览</n-button>
             <n-button text>删除</n-button>
           </div>
         </div>
       </div>
     </div>
+    <div class="my-10" v-if="total >= pageSize">
+      <n-pagination v-model:page="pageNum" v-model:page-size="pageSize" :page-count="pageCount" show-size-picker
+        :page-sizes="[5, 10, 20, 30, 40]" :on-update:page="pageArticle" :on-update:page-size="pageSizeArticle" />
+    </div>
   </div>
-
-
 </template>
 
 <style lang='scss'>

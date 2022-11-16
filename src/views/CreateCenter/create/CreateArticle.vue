@@ -1,18 +1,25 @@
 <script setup lang='ts'>
-import { draftApi, saveArticleApi } from '@/api/Article';
-import { getCategoryListApi, getCategoryListByUid } from '@/api/classify';
+import { getArticleByIdApi, saveArticleApi } from '@/api/Article';
+import { getCategoryListApi } from '@/api/Article/classify';
 import { TagSelector } from '@/components/TagSelector';
 import { useArticleStore } from '@/store/modules/article';
+import axios from 'axios';
+import Cookies from 'js-cookie';
+import { UploadCustomRequestOptions, UploadFileInfo } from 'naive-ui';
 import { FormInst, FormItemRule, FormRules } from 'naive-ui/es/form/src/interface';
-import { onBeforeRouteLeave, onBeforeRouteUpdate } from 'vue-router';
+import { onBeforeRouteLeave, onBeforeRouteUpdate, useRouter } from 'vue-router';
 
 const message: any = inject('message')
 const dialog: any = inject('dialog')
+const { currentRoute } = useRouter()
 
 const addType = ref('')
-const category = ref([])
+const category = ref<any>([])
+const tagInfo = ref<any>([])
+const uploadUrl = import.meta.env.VITE_BASE_URL_UPLOAD + '/file/upload'
+const token = Cookies.get('token')
 
-const article = reactive({
+const article = ref({
   title: '',
   content: '',
   summary: '',
@@ -31,42 +38,60 @@ const isSave = useArticleStore()
 watch(
   () => category.value[0],
   newVal => {
-    article.categoryName = newVal
+    article.value.categoryName = newVal
   }
 )
 
 onMounted(() => {
-  getCategoryListApi().then(res => {
-    categoryList.value = res.data
-  })
+  getCategoryList()
+  getArticle()
   window.addEventListener("beforeunload", tip, false)
 })
 
 const tip = (event: any) => {
-  if (article.content !== '' && !isSave.getIsSave) {
+  if (article.value.content !== '' && !isSave.getIsSave) {
     event.returnValue = '未保存'
   } else {
     return false
   }
 }
 
+const getArticle = () => {
+  if (currentRoute.value.params.id) {
+    getArticleByIdApi(currentRoute.value.params.id).then(res => {
+      article.value = res.data.articleInfo
+      if (res.data.articleInfo.categoryName) {
+        category.value[0] = res.data.articleInfo.categoryName
+      }
+      if (res.data.articleInfo.cover) {
+        article.value.cover = res.data.articleInfo.cover
+      }
+      tagInfo.value = res.data.tagInfo
+    })
+  }
+}
+
+const getCategoryList = () => {
+  getCategoryListApi().then(res => {
+    categoryList.value = res.data
+  })
+}
 
 const getTagIdList = (idList: any) => {
-  article.tagIdList = idList
+  article.value.tagIdList = idList
 }
 
 const getContent = (content: string) => {
-  article.content = content
+  article.value.content = content
 }
 
 //保存至草稿箱
 const saveInDraft = () => {
-  if (article.content === '') {
+  if (article.value.content === '') {
     message.warning('文章内容不能为空！')
   } else {
-    article.status = 0
-    console.log(222);
-    saveArticleApi(article).then(res => {
+    article.value.status = 0
+    saveArticleApi(article.value).then(res => {
       message.success(res.message)
       isSave.setIsSave(true)
     })
@@ -75,20 +100,20 @@ const saveInDraft = () => {
 
 const formRef = ref<FormInst | null>()
 const rules: FormRules = {
-  summary: {
+  summary: [{
     required: true,
     trigger: 'blur',
     validator: (rule: FormItemRule, value: string) => {
       return new Promise<void>((resolve, reject) => {
-        if (value === '') {
+        if (value === null) {
           reject(Error('摘要不能为空'))
         } else {
           resolve()
         }
       })
     }
-  },
-  source: {
+  }],
+  source: [{
     required: true,
     trigger: 'blur',
     validator: (rule: FormItemRule, value: string) => {
@@ -100,27 +125,41 @@ const rules: FormRules = {
         }
       })
     }
-  },
+  }],
 }
 
 const saveArticle = () => {
-  if (article.content === '') {
+  if (article.value.content === '') {
     message.warning('文章内容不能为空')
   } else {
     formRef.value?.validate((errors) => {
       if (!errors) {
-        article.status = 2
-        saveArticleApi(article).then(res => {
+        article.value.status = 2
+        saveArticleApi(article.value).then(res => {
           message.success(res.message)
           isSave.setIsSave(true)
         })
       }
     })
+
   }
 }
 
+//封面上传完成后的回调
+const handleFinish = ({
+  file,
+  event
+}: {
+  file: UploadFileInfo
+  event?: any
+}) => {
+  // message.success((event?.target as XMLHttpRequest).response)
+  //console.log(event.currentTarget);
+  article.value.cover = import.meta.env.VITE_BASE_URL_IMAGE + JSON.parse(event.currentTarget.response).data
+}
+
 onBeforeRouteLeave((to, from, next) => {
-  if (article.content !== '' && !isSave.getIsSave) {
+  if (article.value.content !== '' && !isSave.getIsSave) {
     dialog.warning({
       title: '警告',
       content: '文章已编辑且尚未保存，您确定要离开嘛',
@@ -138,32 +177,32 @@ onBeforeRouteLeave((to, from, next) => {
   }
 })
 
-
-
-
 </script>
 
 <template>
-  <div class="mb-5 mt-3">
+  <div class="mt-3 mb-5">
     <n-input placeholder="文章标题" v-model:value="article.title"></n-input>
   </div>
 
-  <!-- <MdEditorV3 class="light:bg-$light-bg-color dark:bg-v-dark" /> -->
-  <MdEditorV3 @getContent="getContent" />
+  <!-- <MdEditorV3 class="dark:bg-v-dark light:bg-$light-bg-color" /> -->
+  <MdEditorV3 @getContent="getContent" :content="article.content" />
   <n-card class="mt-5 createArticle-card">
     <n-form ref="formRef" :model="article" label-placement="left" label-width="auto"
       require-mark-placement="right-hanging" :style="{ maxWidth: '640px' }" class="mb-40" :rules="rules">
       <n-form-item label="文章封面：" path="">
-        <n-upload action="https://www.mocky.io/v2/5e4bafc63100007100d8b70f" list-type="image-card" :max="1"
-          directory-dnd class="w-100" />
+        <n-upload :action="uploadUrl" :headers="{
+          'Authorization': token
+        }" list-type="image-card" :max="1" directory-dnd class="!w-200" @finish="handleFinish">
+          <n-image v-if="article.cover" with="200" :src="article.cover" preview-disabled class="h-full" />
+        </n-upload>
       </n-form-item>
       <n-form-item label="文章摘要：" path="summary" class="relative">
         <n-input :autosize="{
           minRows: 3,
           maxRows: 3
         }" type="textarea" v-model:value="article.summary" maxlength="256" show-count
-          placeholder="摘要（必填）：会在推荐、列表等场景外露，帮助读者快速了解内容，支持一键将正文前 256 字符键入摘要文本框" />
-        <n-button size="tiny" class="absolute right-5 bottom-2 text-xl">一健提取</n-button>
+          placeholder="摘要（必填）：会在推荐、列表等场景外露，帮助读者快速了解内容，支持系统自动生成摘要" />
+        <n-button size="tiny" class="text-xl right-5 bottom-2 absolute">一健提取</n-button>
       </n-form-item>
       <n-form-item label="文章来源：" path="source">
         <n-space>
@@ -176,7 +215,7 @@ onBeforeRouteLeave((to, from, next) => {
         </n-space>
       </n-form-item>
       <n-form-item label="文章标签：" path="">
-        <TagSelector @getTagIdList="getTagIdList" />
+        <TagSelector @getTagIdList="getTagIdList" :tagInfo="tagInfo" />
       </n-form-item>
       <n-form-item label="分类专栏：" path="">
         <div>
@@ -188,7 +227,7 @@ onBeforeRouteLeave((to, from, next) => {
               </n-button>
             </template>
           </n-dynamic-tags>
-          <div v-if="categoryList.length > 0" class="w-150 border-solid h-50 mt-5 px-5"
+          <div v-if="categoryList.length > 0" class="border-solid h-50 mt-5 px-5 w-150"
             style="border: 1px solid rgb(224, 224, 230)">
             <h1 class="text-xl  py-2" style="border-bottom: 1px solid rgb(224, 224, 230)">选择分类专栏</h1>
             <div class="mt-5">
@@ -245,5 +284,10 @@ onBeforeRouteLeave((to, from, next) => {
 
 .n-popover .n-popover__header {
   text-align: center;
+}
+
+.n-upload-trigger.n-upload-trigger--image-card {
+  width: 20rem;
+  height: 11rem;
 }
 </style>

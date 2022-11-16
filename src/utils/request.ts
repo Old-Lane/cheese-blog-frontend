@@ -84,13 +84,14 @@ service.interceptors.response.use(
         //后端code错误判断
         if (response.status === 401) {
             Cookies.remove('token')
+            Cookies.remove('userInfo')
             message.error('无效的会话，或者会话已过期，请重新登录。')
             // router.push('/login')
             return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         } else if (code === 500) {
             message.error(msg)
             return Promise.reject(new Error(msg))
-        } else if (code !== 200 && code !== -101) {
+        } else if (code !== 200) {
             message.error(msg)
             return Promise.reject('error')
         } else {

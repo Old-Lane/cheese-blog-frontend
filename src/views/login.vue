@@ -103,7 +103,7 @@
 <script setup lang="ts">
 import {FormInst, FormItemRule, FormRules} from "naive-ui";
 import SvgIcon from "@/components/SvgIcon.vue";
-import {code, getUserInfoApi, login} from "@/api/login";
+import {code, login} from "@/api/login";
 import Cookies from 'js-cookie'
 import {useRoute, useRouter} from "vue-router";
 import {useUserStore} from "@/store/modules/user";
@@ -250,7 +250,8 @@ const handleLogin = (e: MouseEvent) => {
       login(user).then(async res => {
         messageReactive.destroy()
         const expires = new Date(new Date().getTime() + 30*60*1000)
-        await Cookies.set('token', res.data, {expires: expires})
+        Cookies.set('token', res.data.token, {expires: expires})
+        Cookies.set('userInfo', JSON.stringify(res.data.userInfo), {expires: expires})
         message.success('登录成功', { duration: 2000 })
         setIsLogin(true)
         redirect.value == undefined ? replace('/') : replace(redirect.value)

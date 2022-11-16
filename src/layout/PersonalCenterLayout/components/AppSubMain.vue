@@ -1,6 +1,6 @@
 <script setup lang='ts'>
-import AppLeft from '@/layout/BaseLayout/components/AppLeft.vue';
-import AppRight from '@/layout/BaseLayout/components/AppRight.vue';
+import AppLeft from './AppSubLeft.vue';
+import AppRight from './AppSubRight.vue';
 
 </script>
 

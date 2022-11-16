@@ -5,7 +5,7 @@
     <div>
       <n-tabs type="line" animated>
         <n-tab name="主页" tab="主页" @click="toIndex"/>
-        <n-tab name="动态" tab="动态" @click="push(`/${Cookies.get('uid')}/dynamic`)"/>
+        <n-tab name="动态" tab="动态" @click="push(`/space/${Cookies.get('uid')}/dynamic`)"/>
         <n-tab name="文章" tab="文章" />
         <n-tab name="收藏" tab="收藏" />
       </n-tabs>
@@ -55,7 +55,7 @@ const menuOptions = ref<MenuOption[]>([
 ])
 
 const toIndex = () => {
-  push(`/${Cookies.get('uid')}`)
+  push(`/space/${Cookies.get('uid')}`)
 }
 </script>
 <style>

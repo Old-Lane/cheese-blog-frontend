@@ -1,25 +1,35 @@
-<script setup lang='ts'>import { listApi } from '@/api/tag';
+<script setup lang='ts'>import { listApi } from '@/api/Article/tag';
 
-interface TagType {
-  id: string,
-  name: string,
-  type: string
-}
-const addType = ref('')
-const addCType = ref('')
+const addCType = ref<string>('')
 const tagIdList = ref<string[]>([])
 const tagList = ref<TagType[]>([])
 const tagNameList = ref<string[]>([])
+const tagInfo = ref<TagType[]>()  
+
+const props = defineProps({
+  tagInfo: {}
+})
+
 onMounted(() => {
-  /* getCategoryListByUid().then(res => {
-    categoryList.value = res.data
-  }) */
   getTagList()
 })
 
+watch(
+  () => props.tagInfo,
+  (newVal:any) => {
+    for (const tag of newVal) {
+      tagNameList.value.push(tag.name)
+      tagIdList.value.push(tag.id)
+    }
+  }
+)
+
+const init = () => {
+  
+}
+
 const getTagList = () => {
   listApi().then(res => {
-    console.log(1, res.data);
     for (let i = 0; i < res.data.length; i++) {
       const list = res.data[i]
       const tag: TagType = {
@@ -85,12 +95,12 @@ watch(
         {{ tag }}
       </n-tag>
       <div class="relative">
-        <div class="w-100vw h-100vh fixed z-0 top-0 left-0" v-if="showSelector" @click="showSelector = false"></div>
+        <div class="h-100vh top-0 left-0 w-100vw z-0 fixed" v-if="showSelector" @click="showSelector = false"></div>
         <div
-          class="w-130 min-h-50 z-10000 absolute bottom-12 left-0 light:bg-$light-card-color dark:bg-$dark-card-color rounded-lg"
+          class="rounded-lg min-h-50 bottom-12 left-0 w-130 z-10000 absolute dark:bg-$dark-card-color light:bg-$light-card-color"
           v-show="showSelector && tagIdList.length < 5" style="box-shadow: 0 0 30px rgb(0 0 0 / 10%);">
-          <div class="py-2 text-center" style="border-bottom: 1px solid #efeff5;">标签</div>
-          <div class="px-3 py-1">
+          <div class="text-center py-2" style="border-bottom: 1px solid #efeff5;">标签</div>
+          <div class="py-1 px-3">
             <n-scrollbar class="max-h-100">
               <n-space>
                 <n-tag v-for="(tag, index) in tagList" :type="tag.type" class="cursor-pointer"
@@ -109,7 +119,3 @@ watch(
     </n-space>
   </div>
 </template>
-
-<style lang='scss' scoped>
-
-</style>

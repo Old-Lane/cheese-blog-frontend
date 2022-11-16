@@ -4,25 +4,25 @@
               shape="circle" :src="nav.avatar" @mouseenter="() => { floatCardVisi = true }" @click="toPersonalCenter"/>
     <div class="floatCard " :class="floatCardVisi ? 'floatCardAnimation' : ''">
       <!-- <n-avatar class="floatCard-avatar" shape="circle" :src="nav.avatar" /> -->
-      <div class="floatCard-cont light:bg-white dark:bg-$n-color">
+      <div class="floatCard-cont dark:bg-$n-color light:bg-white">
         <div style="width: 100%; padding-top: 25px;">
-          <h1 class="flex items-center justify-center mt-8 text-3xl">{{ nav.nickname }}</h1>
-          <div class="table table-fixed my-0 mx-auto text-center mt-5">
-            <div class="table-cell px-8">
+          <h1 class="flex mt-8 text-3xl items-center justify-center">{{ nav.nickname }}</h1>
+          <div class="mx-auto my-0 mt-5 text-center table table-fixed">
+            <div class="px-8 table-cell">
               <div class="text-3xl">1</div>
               <div class="text-12px">关注</div>
             </div>
-            <div class="table-cell px-8">
+            <div class="px-8 table-cell">
               <div class="text-3xl">2</div>
               <div class="text-12px">粉丝</div>
             </div>
-            <div class="table-cell px-8">
+            <div class="px-8 table-cell">
               <div class="text-3xl">3</div>
               <div class="text-12px">获赞</div>
             </div>
           </div>
-          <div class="mt-5 flex flex-col text-14px">
-            <div @click="toPersonalCenter" class="hover:bg-gray-200 h-14 rounded-lg flex items-center transition-all justify-between px-6">
+          <div class="flex flex-col mt-5 text-14px">
+            <div @click="toPersonalCenter" class="rounded-lg flex h-14 px-6 transition-all items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-600">
               <div class="flex">
                 <div class="w-30px">
                   <SvgIcon name="user"/>
@@ -33,7 +33,7 @@
                 <SvgIcon name="right"/>
               </div>
             </div>
-            <div class="hover:bg-gray-200 h-14 rounded-lg flex items-center transition-all justify-between px-6">
+            <div class="rounded-lg flex h-14 px-6 transition-all items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-600">
               <div class="flex">
                 <div class="w-30px">
                   <SvgIcon name="contribute"/>
@@ -47,7 +47,7 @@
           </div>
           <n-divider/>
           <div @click="handleLogout"
-               class="hover:bg-gray-200 text-14px h-14 rounded-lg flex items-center transition-all justify-between px-6">
+               class="rounded-lg flex h-14 px-6 transition-all text-14px items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-600">
             <div class="flex">
               <div class="w-30px">
                 <SvgIcon name="logout"/>
@@ -70,7 +70,8 @@ import {logout} from "@/api/login";
 import {useUserStore} from "@/store/modules/user";
 
 const {push} = useRouter()
-const {setIsLogin} = useUserStore()
+const { setIsLogin } = useUserStore()
+const info = ref<any>({})
 
 const props = defineProps({
   nav: {
@@ -78,6 +79,14 @@ const props = defineProps({
     default: null
   }
 })
+/* watch(
+  () => props,
+  newVal => {
+    info.value = newVal.nav
+  }
+) */
+
+
 
 const floatCardVisi = ref(false)
 const avatarVisi = ref(true)

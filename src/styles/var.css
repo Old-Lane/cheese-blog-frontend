@@ -9,6 +9,9 @@
 
     /*naive-ui*/
     /*--primary-color-hover: #7c7d7e*/
-    --primary-color-hover: #f6b545
+    --primary-color-hover: #f6b545;
 
+    /* comment */
+    --comment-children-color: #f9fafb;
+    --comment-reply-bgcolor: #f2f3f5;
 }

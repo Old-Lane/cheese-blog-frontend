@@ -9,7 +9,7 @@ nProgress.configure({
 
 
 
-const whiteList = ['/login', '/'] // 不重定向白名单
+const whiteList = ['Login', 'Index', 'ArticleDetail'] // 不重定向白名单
 const isLogin = Cookies.get('token')
 
 // 全局前置守卫
@@ -20,11 +20,12 @@ router.beforeEach((to, from, next) => {
             next({ path: '/' })
         }
     } else {
-        if (whiteList.indexOf(to.path) !== -1) {
+        if (whiteList.indexOf(to.name!.toString()) !== -1) {
             next()
         } else {
             next(`/login?redirect=${to.path}`) // 否则全部重定向到登录页
         }
+        next()
     }
     next();
 });

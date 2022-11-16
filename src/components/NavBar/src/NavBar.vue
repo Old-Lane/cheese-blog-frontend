@@ -1,3 +1,93 @@
+<script lang="ts" setup>
+import { h, ref } from 'vue'
+import type { MenuOption } from 'naive-ui'
+import { ThemeSwitch } from "@/components/ThemeSwitch";
+import { RouterLink, useRouter } from "vue-router";
+import { useUserStore } from "@/store/modules/user";
+import { storeToRefs } from "pinia";
+import { navApi } from "@/api/login";
+import SvgIcon from "@/components/SvgIcon.vue";
+import NavUserCard from "@/components/NavUserCard/src/NavUserCard.vue";
+import Cookies from 'js-cookie';
+
+const { push, currentRoute } = useRouter()
+const userStore = useUserStore()
+
+const activeKey = ref<string>(currentRoute.value.path)
+const search = ref('')
+const nav = ref<any>({})
+const avatar = ref()
+
+const menuOptions = ref<MenuOption[]>([
+  {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: 'Index'
+          }
+        },
+        { default: () => '首页' }
+      ),
+    key: '/',
+  },
+  {
+    label: '学习',
+    key: '/study',
+  },
+  {
+    label: () =>
+      h(
+        RouterLink,
+        {
+          to: {
+            name: 'MyClass'
+          }
+        },
+        { default: () => '班级' }
+      ),
+    key: '/myClass',
+  },
+])
+
+onMounted(async () => {
+  if (Cookies.get('token')) {
+    await navApi().then(res => {
+      nav.value = res.data
+      
+    }, rej => {
+      nav.value = rej.data
+    })
+  }
+
+})
+
+// console.log(currentRoute.value.path);
+watch(
+  () => currentRoute.value.path,
+  val => {
+    activeKey.value = val
+  }
+)
+
+const toIndex = (e: MouseEvent): MouseEvent => {
+  push('/')
+  return e
+}
+
+const toLogin = (e: MouseEvent): MouseEvent => {
+  push('/login')
+  return e
+}
+
+const toPlatform = (e: MouseEvent): MouseEvent => {
+  push('/platform')
+  return e
+}
+
+</script>
+
 <template>
   <!--  <div class="nav-bar">-->
   <div class="flex justify-between">
@@ -11,7 +101,7 @@
     <n-input placeholder="搜索感兴趣的内容" v-model:value="search" class="w-180" :size="'large'">
       <template #suffix>
         <span
-            class="cursor-pointer hover:bg-gray-200 transition-all duration-300 w-12 h-12 rounded-1/5 flex items-center justify-center">
+          class="cursor-pointer hover:bg-gray-200 transition-all duration-300 w-12 h-12 rounded-1/5 flex items-center justify-center">
           <SvgIcon name="search" />
         </span>
       </template>
@@ -20,7 +110,7 @@
   <div class="flex items-center justify-between w-155">
     <div class=" login cursor-pointer w-auto flex items-center justify-between ">
       <span v-if="!nav.isLogin" @click="toLogin">登录</span>
-      <NavUserCard v-else :nav="nav"/>
+      <NavUserCard v-else :nav="nav" />
     </div>
     <div class="cursor-pointer hover:text-$primary-color-hover">
       消息
@@ -29,7 +119,7 @@
       历史
     </div>
     <ThemeSwitch />
-    <div @click="push('/platform')" class="cursor-pointer hover:text-$primary-color-hover">
+    <div @click="toPlatform" class="cursor-pointer hover:text-$primary-color-hover">
       创作中心
     </div>
     <n-button type="primary" @click="push('/platform/create')">
@@ -42,63 +132,6 @@
   <!--  </div>-->
 </template>
 
-<script lang="ts" setup>
-import { defineComponent, h, ref, Component } from 'vue'
-import { NIcon, NText, NAvatar } from 'naive-ui'
-import type { MenuOption } from 'naive-ui'
-import { ThemeSwitch } from "@/components/ThemeSwitch";
-import { useRouter } from "vue-router";
-import { useUserStore } from "@/store/modules/user";
-import { storeToRefs } from "pinia";
-import { navApi } from "@/api/login";
-import SvgIcon from "@/components/SvgIcon.vue";
-import { tr } from 'date-fns/locale';
-import NavUserCard from "@/components/NavUserCard/src/NavUserCard.vue";
-import Cookies from "js-cookie";
-
-const { push } = useRouter()
-const userStore = useUserStore()
-const { user, isLogin } = storeToRefs(userStore)
-
-const renderIcon = (icon: Component) => {
-  return () => h(NIcon, null, { default: () => h(icon) })
-}
-
-const menuOptions = ref<MenuOption[]>([
-  {
-    label: '首页',
-    key: 'pinball-1973',
-  }, {
-    label: '学习',
-    key: 'pinball-1973',
-  }, {
-    label: '班级',
-    key: 'pinball-1973',
-  },
-])
-
-const toIndex = (): void => {
-  push('/')
-}
-const activeKey = ref<string | null>(null)
-const toLogin = () => {
-  push('/login')
-}
-
-const nav = ref({})
-const avatar = ref()
-onMounted(async () => {
-  await navApi().then(res => {
-    nav.value = res.data
-  }, rej => {
-    nav.value = rej.data
-  })
-})
-
-const search = ref('')
-
-
-</script>
 <style scoped lang="scss">
 .n-menu .n-menu-item-content {
   padding-left: 20px !important;

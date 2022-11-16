@@ -16,13 +16,6 @@ export const code = (email : string) => {
     })
 }
 
-export const getUserInfoApi = () => {
-    return request({
-        url: import.meta.env.VITE_BASE_URL_WEB + '/user/getInfo',
-        method: 'get'
-    })
-}
-
 export const navApi = () => {
     return request({
         url: import.meta.env.VITE_BASE_URL_WEB + '/index/nav',

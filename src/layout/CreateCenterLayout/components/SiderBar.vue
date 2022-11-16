@@ -2,11 +2,29 @@
 import {MenuOption} from 'naive-ui/es/menu/src/interface';
 import SvgIcon from '@/components/SvgIcon.vue'
 import { useRouter } from 'vue-router';
+import { Role } from '@/constant/role';
+import Cookies from 'js-cookie';
 
 const { push, currentRoute } = useRouter()
 const selectedKey = ref(currentRoute.value.path)
+const role = Cookies.get('role')
+const show = ref( role === Role.TEACHER)
 
-const menuOptions = ref<MenuOption[]>([
+const props = defineProps({
+  role: {
+    type: String,
+    default: Role.COMMON
+  }
+})
+
+watch(
+  () => props.role,
+  val => {
+    show.value = val === Role.TEACHER
+  }
+)
+
+const menuOptions = computed(() => [
   {
     label: () =>
         h(
@@ -81,7 +99,7 @@ const menuOptions = ref<MenuOption[]>([
             ]
         )
     ,
-    key: '/platformmanager/article',
+    key: '/platform/manager/article',
     children: [
       {
         label: () =>
@@ -134,8 +152,51 @@ const menuOptions = ref<MenuOption[]>([
         key: '/platform/manager/comment'
       }
     ]
+  },
+  {
+    label: () =>
+        h(
+            'div',
+            {
+              style: {
+                display: 'flex',
+                alignItems: 'center'
+              }
+            },
+            [
+              h(
+                  SvgIcon,
+                  {
+                    name: 'homework',
+                    size: '20'
+                  },
+                  {
+                    style: {
+                      marginLeft: '20px'
+                    }
+                  }
+              ),
+              h(
+                  'span',
+                  {
+                    style: {
+                      marginLeft: '20px',
+                      fontSize: '16px'
+                    }
+                  },
+                  '作业批改'
+              ),
+            ]
+        )
+    ,
+    key: '/platform/gradeHomework',
+    show: show.value
   }
 ])
+
+onMounted(() => {
+  
+})
 
 const handleUpdateValue = (key: string, item: MenuOption) => {
   push(key)
@@ -144,6 +205,7 @@ const handleUpdateValue = (key: string, item: MenuOption) => {
 </script>
 
 <template>
+  <!-- <n-button @click="show = !show">123</n-button> -->
   <n-menu v-model:value="selectedKey" :options="menuOptions" @update:value="handleUpdateValue"/>
 </template>
 

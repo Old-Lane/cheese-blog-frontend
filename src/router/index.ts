@@ -1,13 +1,28 @@
 import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
 import Layout from '@/layout/BaseLayout/index.vue'
-import Cookies from "js-cookie";
-import {useUserStore} from "@/store/modules/user";
 
 const routes: Array<RouteRecordRaw> = [
     {
         path: '/',
         component: Layout,
-        children: []
+        redirect: '',
+        children: [
+            {
+                path: '',
+                name: 'Index',
+                component: () => import('@/views/Home/index.vue')
+            },
+            {
+                path: 'article/:id',
+                name: 'ArticleDetail',
+                component: () => import('@/views/ArticleDetail/index.vue')
+            },
+            {
+                path: 'myClass',
+                name: 'MyClass',
+                component: () => import('@/views/MyClass/index.vue')
+            }
+        ]
     },
     {
         path: '/login',
@@ -15,7 +30,7 @@ const routes: Array<RouteRecordRaw> = [
         component: () => import('@/views/login.vue')
     },
     {
-        path: '/:uid',
+        path: '/space/:uid',
         name: 'PersonalCenter',
         component: () => import('@/layout/PersonalCenterLayout/index.vue'),
         children: [
@@ -44,7 +59,7 @@ const routes: Array<RouteRecordRaw> = [
             },
             {
                 path: 'manager',
-                name: 'Article',
+                name: 'ArticleManager',
                 children: [
                     {
                         path: '',
@@ -70,7 +85,21 @@ const routes: Array<RouteRecordRaw> = [
                 name: 'Create',
                 component: () => import('@/views/CreateCenter/create/CreateArticle.vue')
             },
-
+            {
+                path: 'create/:id',
+                name: 'Editor',
+                component: () => import('@/views/CreateCenter/create/CreateArticle.vue')
+            },
+            {
+                path: 'gradeHomework',
+                name: 'GradeHomework',
+                component: () => import('@/views/CreateCenter/GradeHomework/index.vue')
+            },
+            {
+                path: '403',
+                name: 'Platform403',
+                component: () => import('@/views/error/403.vue')
+            }
         ]
     }
 ]

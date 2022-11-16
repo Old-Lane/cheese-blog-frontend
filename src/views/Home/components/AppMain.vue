@@ -1,7 +1,7 @@
 <template>
   <div class="app-main-layout">
     <div class="app-left">
-      <AppLeft />
+      <AppLeft/>
     </div>
     <div class="app-right">
       <AppRight/>
@@ -10,17 +10,17 @@
 </template>
 
 <script setup lang="ts">
-import AppLeft from "@/layout/BaseLayout/components/AppLeft.vue";
-import AppRight from "@/layout/BaseLayout/components/AppRight.vue";
+import AppLeft from "./AppLeft.vue";
+import AppRight from "./AppRight.vue";
 </script>
 
 <style scoped lang="scss">
 .app-main-layout {
   width: 960px;
-  height: 100%;
+  // height: 100%;
   //background-color: #f39ec9;
-  margin: 0 auto;
-  padding-top: 2rem;
+  // margin: 0 auto;
+  // padding-top: 2rem;
   display: flex;
   justify-content: space-between;
 }

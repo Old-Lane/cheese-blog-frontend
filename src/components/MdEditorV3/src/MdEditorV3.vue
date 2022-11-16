@@ -7,6 +7,13 @@ import { useArticleStore } from "@/store/modules/article";
 import { storeToRefs } from "pinia";
 
 const message: any = inject('message')
+const props = defineProps({
+  content: {
+    type: String,
+    default: ''
+  }
+})
+
 
 // const text = ref('# 这是标题')
 const toolbars = ref<ToolbarNames[]>([
@@ -43,13 +50,23 @@ const toolbars = ref<ToolbarNames[]>([
 ]
 )
 const state = reactive({
-  text: '',
+  text: props.content,
   modalVisible: false,
   modalFullscreen: false
 });
 
 const emit = defineEmits(['getContent'])
 const isSave = useArticleStore()
+
+onMounted(() => {
+})
+
+watch(
+  () => props.content,
+  newVal => {
+    state.text = newVal
+  }
+)
 
 const onChange = (v: string) => {
   state.text = v
@@ -64,12 +81,11 @@ const codeSave = () => {
   if (state.text === '') {
     message.warning('文章内容不能为空！')
   } else {
-    /* saveArticleApi({ content: state.text }).then(res => {
+    saveArticleApi({ content: state.text }).then(res => {
       message.success(res.message)
       isSave.setIsSave(true)
-    }) */
+    })
     isSave.setIsSave(true)
-
   }
 
 }

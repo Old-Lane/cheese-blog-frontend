@@ -1,3 +1,4 @@
+import Cookies from "js-cookie";
 import {defineStore} from "pinia";
 
 interface UserState {
@@ -16,7 +17,7 @@ interface User {
 export const useUserStore = defineStore('user',{
     state: () : UserState => {
         return {
-            user: <User>{},
+            user: Cookies.get('userInfo') ? JSON.parse(Cookies.get('userInfo')!) : {},
             isLogin: false
         }
     },
