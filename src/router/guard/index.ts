@@ -6,10 +6,16 @@ import Cookies from "js-cookie";
 nProgress.configure({
     showSpinner: false
 })
-
-
-
-const whiteList = ['Login', 'Index', 'ArticleDetail'] // 不重定向白名单
+const whiteList = [
+    'Login',
+    'Index',
+    'ArticleDetail',
+    'PersonalIndex',
+    'PersonalDynamic',
+    'PersonalColumn',
+    'PersonalFriends',
+    'PersonalFans'
+] // 不重定向白名单
 const isLogin = Cookies.get('token')
 
 // 全局前置守卫

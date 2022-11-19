@@ -54,7 +54,7 @@ service.interceptors.request.use(
         if (!config.neverCancel) {
             // 生成canalToken
             config.cancelToken = new CancelToken((c: any) => {
-                removePending(config, c);
+                // removePending(config, c);
             });
         }
         // 添加请求头以及其他逻辑处理
@@ -82,11 +82,13 @@ service.interceptors.response.use(
         // @ts-ignore
         const msg = errorCode[code] || res.message || errorCode['default']
         //后端code错误判断
+        if (response.status === 403) {
+            // router.push('/login')
+        }
         if (response.status === 401) {
             Cookies.remove('token')
             Cookies.remove('userInfo')
             message.error('无效的会话，或者会话已过期，请重新登录。')
-            // router.push('/login')
             return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         } else if (code === 500) {
             message.error(msg)

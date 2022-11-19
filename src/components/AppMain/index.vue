@@ -25,7 +25,7 @@
 }
 @media screen and (min-width: 960px){
   .app-left {
-    width: 700px;
+    width: 710px;
     height: 100%;
     // background-color: #ffffff;
   }

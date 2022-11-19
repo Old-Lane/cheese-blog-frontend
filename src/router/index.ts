@@ -21,7 +21,40 @@ const routes: Array<RouteRecordRaw> = [
                 path: 'myClass',
                 name: 'MyClass',
                 component: () => import('@/views/MyClass/index.vue')
-            }
+            },
+            {
+                path: '/space/:uid',
+                name: 'PersonalCenter',
+                redirect: '',
+                component: () => import('@/views/PersonalCenter/index.vue'),
+                children: [
+                    {
+                        path: '',
+                        name: 'PersonalIndex',
+                        component: () => import('@/views/PersonalCenter/components/ContentInfo/article.vue')
+                    },
+                    {
+                        path: 'dynamic',
+                        name: 'PersonalDynamic',
+                        component: () => import('@/views/PersonalCenter/components/ContentInfo/dynamic.vue')
+                    },
+                    {
+                        path: 'column',
+                        name: 'PersonalColumn',
+                        component: () => import('@/views/PersonalCenter/components/ContentInfo/column.vue')
+                    },
+                    {
+                        path: 'friends',
+                        name: 'PersonalFriends',
+                        component: () => import('@/views/PersonalCenter/components/ContentInfo/friends.vue')
+                    },
+                    {
+                        path: 'fans',
+                        name: 'PersonalFans',
+                        component: () => import('@/views/PersonalCenter/components/ContentInfo/fans.vue')
+                    }
+                ]
+            },
         ]
     },
     {
@@ -29,7 +62,7 @@ const routes: Array<RouteRecordRaw> = [
         name: 'Login',
         component: () => import('@/views/login.vue')
     },
-    {
+    /* {
         path: '/space/:uid',
         name: 'PersonalCenter',
         component: () => import('@/layout/PersonalCenterLayout/index.vue'),
@@ -45,7 +78,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import('@/views/PersonalCenter/src/dynamic.vue')
             }
         ]
-    },
+    }, */
     {
         path: '/platform',
         name: 'Platform',

@@ -7,6 +7,7 @@ declare type Article = {
   status?: number,
   source?: number,
   createTime?: string,
+  publishTime?: string,
   views?: number,
   commentCount?: string,
   collectCount?: string,
@@ -14,7 +15,9 @@ declare type Article = {
   audit?: number,
   updateTime?: string,
   categoryName?: string,
-  userId?: string
+  userId?: string,
+  author?: string,
+  isLiked?: boolean
 }
 
 declare type ArticleType = {

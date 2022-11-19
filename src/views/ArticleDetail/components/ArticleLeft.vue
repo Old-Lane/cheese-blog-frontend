@@ -22,7 +22,8 @@ onMounted(() => {
       useEmitt().emitter.emit('PaneInfo', {
         likeCount: res.data.articleInfo.likeCount,
         commentCount: res.data.articleInfo.commentCount,
-        collectCount: res.data.articleInfo.collectCount
+        collectCount: res.data.articleInfo.collectCount,
+        isLiked: res.data.articleInfo.isLiked
       })
     })
   })
@@ -63,7 +64,7 @@ onMounted(() => {
     </n-card>
     <n-card class="my-8">
       <div class="pb-5">
-        <div class="mb-5">
+        <div id="comment" class="mb-5">
           <span class="font-700 text-3xl">评论</span>
         </div>
         <SendComment />

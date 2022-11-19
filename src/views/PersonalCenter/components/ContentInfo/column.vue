@@ -4,7 +4,7 @@
 
 <template>
   <div>
-    主页
+    专栏
   </div>
 </template>
 

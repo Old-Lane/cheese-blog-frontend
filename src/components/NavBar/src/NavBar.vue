@@ -45,7 +45,7 @@ const menuOptions = ref<MenuOption[]>([
             name: 'MyClass'
           }
         },
-        { default: () => '班级' }
+        { default: () => '校园' }
       ),
     key: '/myClass',
   },

@@ -1,4 +1,4 @@
-export const timeago = (time: string) : string => {
+export const timeago = (time: string): string => {
   const data = new Date(time);
   const dateTimeStamp = data.getTime();
   const minute = 1000 * 60; //把分，时，天，周，半个月，一个月用毫秒表示
@@ -10,13 +10,12 @@ export const timeago = (time: string) : string => {
   const now = new Date().getTime(); //获取当前时间毫秒
   const diffValue = now - dateTimeStamp; //时间差
   // console.log(time, diffValue, 1);
-  
 
   let result = "";
   if (diffValue < 0) {
     result = "" + "未来";
   }
-  const minC = Math.floor(diffValue / minute) ; //计算时间差的分，时，天，周，月
+  const minC = Math.floor(diffValue / minute); //计算时间差的分，时，天，周，月
   const hourC = Math.floor(diffValue / hour);
   const dayC = Math.floor(diffValue / day);
   const weekC = Math.floor(diffValue / week);
@@ -40,4 +39,18 @@ export const timeago = (time: string) : string => {
   }
 
   return result;
-}
+};
+
+export const timeFormat = (time: string) => {
+  const date = new Date(time);
+
+  const year = date.getFullYear(),
+    month = date.getMonth() + 1, //月份是从0开始的
+    day = date.getDate(),
+    hour = date.getHours(),
+    min = date.getMinutes(),
+    sec = date.getSeconds()
+  const newTime =
+    year + "-" + month + "-" + day
+  return newTime;
+};

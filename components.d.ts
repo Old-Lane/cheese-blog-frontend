@@ -8,10 +8,12 @@ export {}
 declare module '@vue/runtime-core' {
   export interface GlobalComponents {
     AppMain: typeof import('./src/components/AppMain/index.vue')['default']
+    ArticleList: typeof import('./src/components/ArticleList/index.vue')['default']
     CommentList: typeof import('./src/components/Comment/CommentList.vue')['default']
     EmojiExtension: typeof import('./src/components/MdEditorV3/src/EmojiExtension/index.vue')['default']
     HelloWorld: typeof import('./src/components/HelloWorld.vue')['default']
     MdEditorV3: typeof import('./src/components/MdEditorV3/src/MdEditorV3.vue')['default']
+    NAffix: typeof import('naive-ui')['NAffix']
     NAvatar: typeof import('naive-ui')['NAvatar']
     NavBar: typeof import('./src/components/NavBar/src/NavBar.vue')['default']
     NavUserCard: typeof import('./src/components/NavUserCard/src/NavUserCard.vue')['default']
