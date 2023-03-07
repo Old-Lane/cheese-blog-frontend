@@ -18,3 +18,14 @@ export const sendCommentApi = (comment: CommentType) => {
     data: comment
   })
 }
+
+/**
+ * 获取我的最新评论
+ * @returns 
+ */
+export const getMyNewCommentApi = () => {
+  return request({
+    url: import.meta.env.VITE_BASE_URL_CREATOR + "/comment/myNew",
+    method: "post"
+  })
+}

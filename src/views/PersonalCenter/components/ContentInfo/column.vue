@@ -3,9 +3,9 @@
 </script>
 
 <template>
-  <div>
+  <n-card>
     专栏
-  </div>
+  </n-card>
 </template>
 
 <style lang='scss' scoped>

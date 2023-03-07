@@ -17,9 +17,9 @@ onMounted(() => {
 </script>
 
 <template>
-  <div>
+  <n-card>
     <ArticleList />
-  </div>
+  </n-card>
 </template>
 
 <style lang='scss' scoped>

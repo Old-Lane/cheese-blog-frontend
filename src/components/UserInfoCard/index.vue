@@ -1,5 +1,37 @@
-<script setup lang='ts'>
+<script setup lang='ts'>import { followUserApi, unfollowUserApi } from '@/api/follow';
+import { useEmitt } from '@/hook/web/useEmitt';
+import Cookies from 'js-cookie';
+import { useRouter } from 'vue-router';
 
+const user = ref<UserCardType>({})
+const { currentRoute, push } = useRouter()
+
+useEmitt({
+  name: 'getUserInfo',
+  callback: (data: any) => {
+    user.value = data
+  }
+})
+
+const followUser = () => {
+  if (!Cookies.get('token')) {
+    push(`/login?redirect=${currentRoute.value.path}`)
+  } else {
+    followUserApi(user.value.id!).then(res => {
+      if (res.code === 200) {
+        user.value.isFollowed = true
+      }
+    })
+  }
+}
+
+const UnfollowUser = () => {
+  unfollowUserApi(user.value.id!).then(res => {
+    if (res.code === 200) {
+      user.value.isFollowed = false
+    }
+  })
+}
 </script>
 
 <template>
@@ -9,28 +41,29 @@
       <div class="user-info">
         <!-- <div class="user-info-bgi"></div> -->
         <div class="user-info-avatar">
-          <img src="@/assets/imgs/lucy.jpg" alt="">
+          <img @click="push(`/space/${user.id}`)" :src="user.avatar" alt="" class="cursor-pointer">
         </div>
-        <div class="user-name">
-          <span class="myfont">芝士雪豹</span>
+        <div @click="push(`/space/${user.id}`)" class="user-name">
+          <span class="myfont cursor-pointer">{{user.nickname}}</span>
         </div>
-        <div style="margin: 8px 0; font-size: 14px; color: #97a8e7; letter-spacing: 2px">心之所向，素履以往</div>
+        <div class="summary" style="margin: 8px 0; font-size: 14px; color: #97a8e7; letter-spacing: 2px">{{user.profile}}</div>
         <div class="flex w-7/10 justify-between my-0 mx-auto">
-          <n-button class="w-47/100" color="#97a8e7">关注</n-button>
-          <n-button class="w-47/100" ghost color="#97a8e7">私信</n-button>
+          <n-button @click="followUser" v-if="!user.isFollowed" class="w-47/100" color="#97a8e7">关注</n-button>
+          <n-button @click="UnfollowUser" v-else class="w-47/100" color="#97a8e7">关注</n-button>
+          <n-button  class="w-47/100" ghost color="#97a8e7">私信</n-button>
         </div>
         <div class="user-info-data">
-          <div class="user-info-data-item">
+          <div @click="push(`/space/${user.id}`)" class="user-info-data-item cursor-pointer">
             <div class="headline">文章</div>
-            <div class="num">{{1}}</div>
+            <div class="num">{{user.articleCount}}</div>
           </div>
           <div class="user-info-data-item">
             <div class="headline">阅读量</div>
-            <div class="num">{{2}}</div>
+            <div class="num">{{user.viewCount}}</div>
           </div>
           <div class="user-info-data-item">
             <div class="headline">获赞</div>
-            <div class="num">{{3}}</div>
+            <div class="num">{{user.likeCount}}</div>
           </div>
         </div>
       </div>
@@ -87,5 +120,11 @@
       }
     }
   }
+}
+.summary {
+  display: -webkit-box;
+  -webkit-box-orient: vertical;
+  -webkit-line-clamp: 1;
+  overflow: hidden;
 }
 </style>

@@ -55,7 +55,6 @@ onMounted(async () => {
   if (Cookies.get('token')) {
     await navApi().then(res => {
       nav.value = res.data
-      
     }, rej => {
       nav.value = rej.data
     })

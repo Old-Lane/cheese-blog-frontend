@@ -7,7 +7,7 @@ import { useEmitt } from '@/hook/web/useEmitt';
 import { timeago } from '@/utils/time'
 import { useRouter } from 'vue-router';
 
-const {push} = useRouter()
+const { push } = useRouter()
 
 /* const article = ref({
   audit: 1,
@@ -36,6 +36,7 @@ const {push} = useRouter()
 }) */
 
 const article = ref<Array<Article>>([])
+const loading = ref(true)
 
 const tagInfo = ref<any>([])
 const avatarList = ref<any>([])
@@ -54,21 +55,31 @@ useEmitt({
   name: 'listArticle',
   callback: (data: any) => {
     listAllApi(data.sort, data.page, data.pageSize, data.uid).then(res => {
-      console.log(res);
+      // console.log(res);
       article.value = res.data.records[0].article
       tagInfo.value = res.data.records[0].tagInfo
       avatarList.value = res.data.records[0].avatar
+      loading.value = false
     })
   }
 })
+
+
+
 </script>
 
 <template>
   <div class="w-full">
+    <div v-if="loading">
+      <n-skeleton text style="width: 20%; margin-top: 15px;" />
+      <n-skeleton text :repeat="2" />
+      <n-skeleton text style="width: 60%" />
+    </div>
     <div v-for="(item, index) in article" key="index">
       <div class="w-full h-58 py-5 flex justify-between items-center">
         <div class="w-80/100 h-full flex flex-col">
-          <div @click="push(`/article/${item.id!}`)" class="font-700 text-3xl mb-3 cursor-pointer hover:text-$primary-color-hover">
+          <div @click="push(`/article/${item.id!}`)"
+            class="font-700 text-3xl mb-3 cursor-pointer hover:text-$primary-color-hover">
             {{ item.title }}
           </div>
           <div class="h-1/2">
@@ -80,10 +91,10 @@ useEmitt({
             <div class="flex items-center text-gray-400 text-xl cursor-pointer">
               <n-popover trigger="hover" width="250" :show-arrow="true" :delay="300" :duration="200">
                 <template #trigger>
-                  <div @mouseover="handleShowCard(item.userId!)" @click="push(`/space/${item.userId}`)" class="flex items-center mr-5 text-gray-800 dark:text-gray-200 cursor-pointer">
+                  <div @mouseover="handleShowCard(item.userId!)" @click="push(`/space/${item.userId}`)"
+                    class="flex items-center mr-5 text-gray-800 dark:text-gray-200 cursor-pointer">
                     <span class="mr-3">
-                      <n-avatar round size="small"
-                        :src="avatarList[index]" />
+                      <n-avatar round size="small" :src="avatarList[index]" />
                     </span>
                     {{ item.author }}
                   </div>
@@ -97,7 +108,7 @@ useEmitt({
               <div class="w-0.1px h-16px bg-gray-200 mr-5"></div>
               <div>
                 <span v-for="(tag, index2) in tagInfo[index]" key="index2">
-                  <span class="hover:text-orange-300">
+                  <span @click="push(`/tag/${tag.name}`)" class="hover:text-orange-300">
                     {{ tag.name }}
                   </span>
                   <span v-if="index2 !== tagInfo[index].length - 1">
@@ -123,7 +134,8 @@ useEmitt({
           </div>
         </div>
         <div class="w-19/100 h-full flex items-center ">
-          <n-image @click="push(`/article/${item.id!}`)" class="w-full h-7/10 cursor-pointer" :src="item.cover" object-fit="cover" preview-disabled />
+          <n-image @click="push(`/article/${item.id!}`)" class="w-full h-7/10 cursor-pointer" :src="item.cover"
+            object-fit="cover" preview-disabled />
         </div>
       </div>
       <n-divider />

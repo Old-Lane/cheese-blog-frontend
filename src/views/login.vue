@@ -121,8 +121,8 @@ type User = {
 }
 
 const user = reactive<User>({
-  username: '',
-  password: '',
+  username: 'admin',
+  password: 'admin',
   email: '',
   code: ''
 })
@@ -147,7 +147,7 @@ const sendCode = () => {
   }, 59000)
 }
 
-const isAgree = ref<boolean>(false)
+const isAgree = ref<boolean>(true)
 const agree = ref()
 const formRef = ref<FormInst | null>()
 const rules: FormRules = {

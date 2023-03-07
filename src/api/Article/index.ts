@@ -97,3 +97,18 @@ export const parseArticleApi = (id: string | string[]) => {
     }
   })
 }
+
+/**
+ * 根据文章id获取x相关文章
+ * @param id 文章id
+ * @returns 
+ */
+export const getAboutByIdApi = (id: string | string[]) => {
+  return request({
+    url: import.meta.env.VITE_BASE_URL_WEB + "/article/getAbout",
+    method: "get",
+    params: {
+      id: id,
+    }
+  })
+}

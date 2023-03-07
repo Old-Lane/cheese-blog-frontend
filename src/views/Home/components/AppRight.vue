@@ -13,30 +13,40 @@
         <SvgIcon name="rank" :size="22" class="mr-2" />
         <span>作者排行</span>
       </div>
-      <div class="flex justify-center h-40">占个位</div>
+      <div @click="toPerson(item.id)" v-for="item in authors" class="flex items-center mt-10 cursor-pointer">
+        <n-avatar :size="45" round :src="item.avatar" />
+        <span class="ml-5">{{ item.nickname }}</span>
+      </div>
     </n-card>
 
-    <n-card class="p-5 mb-5">
+    <!-- <n-card class="p-5 mb-5">
       <div class="text-2xl flex items-center mb-3">
         <SvgIcon name="recomend" :size="22" class="mr-2" />
         <span>文章推荐</span>
       </div>
       <div class="flex justify-center h-40">占个位</div>
-    </n-card>
+    </n-card> -->
 
   </div>
 </template>
 
 <script setup lang="ts">
+import { getAuthorTop10 } from '@/api/user';
+import { useRouter } from 'vue-router';
+
+const {push} = useRouter()
+
 const greetings = ref('早上好')
 
 const newTime = ref<number>()
+const authors = ref<Array<any>>([])
 
 onMounted(() => {
   getNowTime();//进入页面调用该方法获取当前时间
   setInterval(() => {
     getNowTime(); //每秒更新一次时间
   }, 1000);
+  getAuthor()
 })
 
 const getNowTime = () => {
@@ -62,6 +72,18 @@ watch(
   }
 )
 
+const getAuthor = () => {
+  getAuthorTop10().then(res => {
+    authors.value = res.data
+  })
+}
+
+const toPerson = (id: string) => {
+  push({
+    name: 'PersonalIndex',
+    params: {uid: id}
+  })
+}
 
 
 </script>

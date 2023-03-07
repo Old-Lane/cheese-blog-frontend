@@ -80,7 +80,7 @@ const handleUpdateValue = (name: string) => {
   padding-top: 0.1rem;
 }
 
-.home-app-right .n-divider:not(.n-divider--vertical) {
+.n-divider:not(.n-divider--vertical) {
   margin-top: 0;
   margin-bottom: 0;
 }

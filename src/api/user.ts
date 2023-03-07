@@ -27,31 +27,35 @@ export const getUserCardInfoApi = (id: string | string[]) => {
 }
 
 /**
- * 关注
- * @param id 被关注用户id
+ * 获取用户信息详细
  * @returns 
  */
-export const followUserApi = (id: string | string[]) => {
+export const getUserInfoDetailApi = () => {
   return request({
-    url: import.meta.env.VITE_BASE_URL_WEB + '/user/follow',
-    method: 'post',
-    params: {
-      id
-    }
+    url: import.meta.env.VITE_BASE_URL_WEB + '/user/detail',
+    method: 'get'
   })
 }
 
 /**
- * 取关
- * @param id 被关注用户id
+ * 修改用户信息详细
  * @returns 
  */
- export const unfollowUserApi = (id: string | string[]) => {
+export const modifyUserInfoDetailApi = (userInfo : any) => {
   return request({
-    url: import.meta.env.VITE_BASE_URL_WEB + '/user/unfollow',
-    method: 'delete',
-    params: {
-      id
-    }
+    url: import.meta.env.VITE_BASE_URL_WEB + '/user/modify',
+    method: 'put',
+    data: userInfo
+  })
+}
+
+/**
+ * 获取前十作者
+ * @returns 
+ */
+export const getAuthorTop10 = () => {
+  return request({
+    url: import.meta.env.VITE_BASE_URL_WEB + '/user/top10',
+    method: 'get'
   })
 }

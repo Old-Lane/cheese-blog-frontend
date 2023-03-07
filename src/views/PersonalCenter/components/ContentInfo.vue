@@ -27,7 +27,7 @@ const handleUpdateValue = (name: string) => {
 <template>
   <div class="space-info">
     <n-card class="mt-5">
-      <n-tabs type="line" v-model:value="focus" @update:value="handleUpdateValue" class="pt-3 pb-2">
+      <n-tabs type="line" v-model:value="focus" @update:value="handleUpdateValue" class="pt-3">
         <n-tab name="">
           <span class="text-16px">文章</span>
         </n-tab>
@@ -37,6 +37,9 @@ const handleUpdateValue = (name: string) => {
         <n-tab name="column">
           <span class="text-16px">专栏</span>
         </n-tab>
+        <n-tab name="collect">
+          <span class="text-16px">收藏夹</span>
+        </n-tab>
         <n-tab name="friends">
           <span class="text-16px">关注</span>
         </n-tab>
@@ -44,8 +47,8 @@ const handleUpdateValue = (name: string) => {
           <span class="text-16px">粉丝</span>
         </n-tab>
       </n-tabs>
-      <router-view />
     </n-card>
+    <router-view />
   </div>
 
 </template>
@@ -53,5 +56,13 @@ const handleUpdateValue = (name: string) => {
 <style lang='scss'>
 .space-info .n-card>.n-card__content {
   padding-top: 0 !important;
+  padding-bottom: 0 !important;
+}
+.space-info .n-tabs .n-tabs-nav.n-tabs-nav--line-type .n-tabs-nav-scroll-content {
+  transition: border-color .3s var(--n-bezier);
+    border-bottom: 1px solid rgb(239 239 245 / 0%);
+}
+.n-card.n-card--bordered {
+  border-bottom: 0;
 }
 </style>

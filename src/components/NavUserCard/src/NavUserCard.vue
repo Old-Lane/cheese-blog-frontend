@@ -1,3 +1,58 @@
+<script setup lang="ts">
+import {ref} from "vue";
+import SvgIcon from "@/components/SvgIcon.vue";
+import Cookies from "js-cookie";
+import {useRouter} from "vue-router";
+import {logout} from "@/api/login";
+import {useUserStore} from "@/store/modules/user";
+
+const {push} = useRouter()
+const { setIsLogin } = useUserStore()
+const info = ref<any>({})
+
+const props = defineProps({
+  nav: {
+    type: Object,
+    default: null
+  }
+})
+
+const floatCardVisi = ref(false)
+const avatarVisi = ref(true)
+
+const toPersonalCenter = () => {
+  Cookies.set('uid', props.nav.uid)
+  push({
+    name: 'PersonalIndex',
+    params: {uid: props.nav.uid}
+  })
+}
+
+const tofriends = () => {
+  const uid = Cookies.get('uid')
+  push(`/space/${uid}/friends`)
+}
+
+const tofans = () => {
+  const uid = Cookies.get('uid')
+  push(`/space/${uid}/fans`)
+}
+
+//退出登录
+const handleLogout = () => {
+  logout().then(res => {
+    Cookies.remove('token')
+    push('/login')
+    setIsLogin(false)
+  })
+}
+
+const toSetting = () => {
+  push('/setting')
+}
+
+</script>
+
 <template>
   <div class="avatar-header" @mouseleave="() => { avatarVisi = true; floatCardVisi = false}">
     <n-avatar round :size="35" :class="floatCardVisi ? 'avatarLargeAnimation' : 'avatarSmallAnimation'" class="avatar"
@@ -8,15 +63,15 @@
         <div style="width: 100%; padding-top: 25px;">
           <h1 class="flex mt-8 text-3xl items-center justify-center">{{ nav.nickname }}</h1>
           <div class="mx-auto my-0 mt-5 text-center table table-fixed">
-            <div class="px-8 table-cell">
+            <div @click="tofriends" class="px-8 table-cell hover:text-$primary-color-hover">
               <div class="text-3xl">1</div>
               <div class="text-12px">关注</div>
             </div>
-            <div class="px-8 table-cell">
+            <div @click="tofans" class="px-8 table-cell hover:text-$primary-color-hover">
               <div class="text-3xl">2</div>
               <div class="text-12px">粉丝</div>
             </div>
-            <div class="px-8 table-cell">
+            <div class="px-8 table-cell hover:text-$primary-color-hover">
               <div class="text-3xl">3</div>
               <div class="text-12px">获赞</div>
             </div>
@@ -44,6 +99,17 @@
                 <SvgIcon name="right"/>
               </div>
             </div>
+            <div @click="toSetting" class="rounded-lg flex h-14 px-6 transition-all items-center justify-between hover:bg-gray-200 dark:hover:bg-gray-600">
+              <div class="flex">
+                <div class="w-30px">
+                  <SvgIcon name="setting"/>
+                </div>
+                <span>编辑资料</span>
+              </div>
+              <div>
+                <SvgIcon name="right"/>
+              </div>
+            </div>
           </div>
           <n-divider/>
           <div @click="handleLogout"
@@ -60,55 +126,6 @@
     </div>
   </div>
 </template>
-
-<script setup lang="ts">
-import {ref} from "vue";
-import SvgIcon from "@/components/SvgIcon.vue";
-import Cookies from "js-cookie";
-import {useRouter} from "vue-router";
-import {logout} from "@/api/login";
-import {useUserStore} from "@/store/modules/user";
-
-const {push} = useRouter()
-const { setIsLogin } = useUserStore()
-const info = ref<any>({})
-
-const props = defineProps({
-  nav: {
-    type: Object,
-    default: null
-  }
-})
-/* watch(
-  () => props,
-  newVal => {
-    info.value = newVal.nav
-  }
-) */
-
-
-
-const floatCardVisi = ref(false)
-const avatarVisi = ref(true)
-
-const toPersonalCenter = () => {
-  Cookies.set('uid', props.nav.uid)
-  push({
-    name: 'PersonalIndex',
-    params: {uid: props.nav.uid}
-  })
-}
-
-//退出登录
-const handleLogout = () => {
-  logout().then(res => {
-    Cookies.remove('token')
-    push('/login')
-    setIsLogin(false)
-  })
-}
-
-</script>
 
 <style scoped lang="scss">
 @keyframes avatar-large {

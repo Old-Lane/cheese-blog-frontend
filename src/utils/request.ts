@@ -88,6 +88,7 @@ service.interceptors.response.use(
         if (response.status === 401) {
             Cookies.remove('token')
             Cookies.remove('userInfo')
+            Cookies.remove('uid')
             message.error('无效的会话，或者会话已过期，请重新登录。')
             return Promise.reject('无效的会话，或者会话已过期，请重新登录。')
         } else if (code === 500) {

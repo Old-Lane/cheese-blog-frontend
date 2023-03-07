@@ -1,4 +1,4 @@
-import {createRouter, createWebHashHistory, RouteRecordRaw} from "vue-router";
+import { createRouter, createWebHashHistory, RouteRecordRaw } from "vue-router";
 import Layout from '@/layout/BaseLayout/index.vue'
 
 const routes: Array<RouteRecordRaw> = [
@@ -16,6 +16,11 @@ const routes: Array<RouteRecordRaw> = [
                 path: 'article/:id',
                 name: 'ArticleDetail',
                 component: () => import('@/views/ArticleDetail/index.vue')
+            },
+            {
+                path: 'tag/:tag',
+                name: 'Tag',
+                component: () => import('@/views/Tag/index.vue')
             },
             {
                 path: 'myClass',
@@ -52,9 +57,37 @@ const routes: Array<RouteRecordRaw> = [
                         path: 'fans',
                         name: 'PersonalFans',
                         component: () => import('@/views/PersonalCenter/components/ContentInfo/fans.vue')
+                    },
+                    {
+                        path: 'collect',
+                        name: 'PersonalCollect',
+                        component: () => import('@/views/PersonalCenter/components/ContentInfo/Collect.vue')
                     }
                 ]
             },
+            {
+                path: 'setting',
+                name: 'Setting',
+                component: () => import('@/views/Setting/index.vue'),
+                redirect: '/setting/profile',
+                children: [
+                    {
+                        path: 'profile',
+                        name: 'Profile',
+                        component: () => import('@/views/Setting/components/Profile.vue')
+                    },
+                    {
+                        path: 'account',
+                        name: 'Account',
+                        component: () => import('@/views/Setting/components/Account.vue')
+                    }
+                ]
+            },
+            {
+                path: 'chat',
+                name: 'Chat',
+                component: () => import('@/views/Chat/index.vue')
+            }
         ]
     },
     {
@@ -88,7 +121,7 @@ const routes: Array<RouteRecordRaw> = [
             {
                 path: 'home',
                 name: 'Home',
-                component: () => import('@/views/CreateCenter/home.vue')
+                component: () => import('@/views/CreateCenter/Home/home.vue')
             },
             {
                 path: 'manager',
@@ -134,7 +167,7 @@ const routes: Array<RouteRecordRaw> = [
                 component: () => import('@/views/error/403.vue')
             }
         ]
-    }
+    },
 ]
 
 const router = createRouter({

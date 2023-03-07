@@ -60,6 +60,6 @@ const getUserInfo = () => {
   padding: 0 !important;
 }
 .contain .n-card > .n-card__content:first-child, .n-card > .n-card__footer:first-child {
-  padding-top: 5px;
+  padding-top: 20px;
 }
 </style>

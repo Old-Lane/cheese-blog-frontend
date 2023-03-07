@@ -6,6 +6,8 @@ import { useRouter } from 'vue-router';
 import CommentList from "@/components/Comment/CommentList.vue";
 import SendComment from "@/components/Comment/SendComment.vue";
 import { useEmitt } from "@/hook/web/useEmitt";
+import { getUserCardInfoApi } from "@/api/user";
+import ArticleList from '@/components/ArticleList/index.vue'
 
 
 const { currentRoute } = useRouter()
@@ -15,19 +17,33 @@ const article = ref<Article>({})
 const tagList = ref<Array<TagType>>([])
 
 onMounted(() => {
-  nextTick(() => {
-    getArticleByIdApi(currentRoute.value.params.id).then(res => {
-      article.value = res.data.articleInfo
-      tagList.value = res.data.tagInfo
-      useEmitt().emitter.emit('PaneInfo', {
-        likeCount: res.data.articleInfo.likeCount,
-        commentCount: res.data.articleInfo.commentCount,
-        collectCount: res.data.articleInfo.collectCount,
-        isLiked: res.data.articleInfo.isLiked
-      })
+  getArticle()
+})
+
+const getArticle = async () => {
+  await getArticleByIdApi(currentRoute.value.params.id).then(res => {
+    article.value = res.data.articleInfo
+    tagList.value = res.data.tagInfo
+    useEmitt().emitter.emit('PaneInfo', {
+      likeCount: res.data.articleInfo.likeCount,
+      commentCount: res.data.articleInfo.commentCount,
+      collectCount: res.data.articleInfo.collectCount,
+      isLiked: res.data.articleInfo.isLiked
     })
   })
-})
+  getUserCardInfoApi(article.value.userId!).then(res => {
+    useEmitt().emitter.emit('getUserInfo', res.data)
+  })
+}
+
+watch(
+  () => currentRoute.value.params,
+  val => {
+    if (val.id != null) {
+      getArticle()
+    }
+  }
+)
 
 </script>
 
@@ -69,9 +85,15 @@ onMounted(() => {
         </div>
         <SendComment />
       </div>
-      <div>
+      <div v-if="article.commentCount !== '0'">
         <CommentList :authorId="article.userId" />
       </div>
+    </n-card>
+    <n-card class="my-8">
+      <div class="mb-5">
+        <span class="font-700 text-3xl">相关推荐</span>
+      </div>
+      <ArticleList />
     </n-card>
   </div>
 </template>

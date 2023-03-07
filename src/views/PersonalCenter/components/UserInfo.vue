@@ -1,5 +1,6 @@
 <script setup lang='ts'>
-import { followUserApi, unfollowUserApi } from '@/api/user';
+import { followUserApi, unfollowUserApi } from '@/api/follow';
+
 import SvgIcon from '@/components/SvgIcon.vue';
 import { useEmitt } from '@/hook/web/useEmitt';
 import { timeFormat } from '@/utils/time'
@@ -9,6 +10,7 @@ import { useRouter } from 'vue-router';
 const { currentRoute, push } = useRouter()
 
 const user = ref<UserCardType>({})
+const me = Cookies.get('userInfo') ? JSON.parse(Cookies.get('userInfo')!) : {}
 
 useEmitt({
   name: 'getUserInfo',
@@ -37,6 +39,13 @@ const UnfollowUser = () => {
   })
 }
 
+const editProfile = () => {
+  push('/setting')
+}
+
+const chatWith = () => {
+  push('/chat')
+}
 </script>
 
 <template>
@@ -67,10 +76,13 @@ const UnfollowUser = () => {
         </div>
       </div>
 
-      <div class="flex mt-10">
+      <div v-if="user.id !== me.id!" class="flex mt-10">
         <n-button v-if="!user.isFollowed" @click="followUser" type="warning" class="mr-5 w-35">＋关注</n-button>
         <n-button v-else @click="UnfollowUser" type="warning" ghost class="mr-5 w-35">已关注</n-button>
-        <n-button type="warning" ghost class="w-35">私信</n-button>
+        <n-button type="warning" ghost class="w-35" @click="chatWith">私信</n-button>
+      </div>
+      <div v-else class="cursor-pointer">
+        <n-button size="tiny" @click="editProfile">编辑资料</n-button>
       </div>
     </div>
   </n-card>

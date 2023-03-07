@@ -1,7 +1,7 @@
 <script setup lang='ts'>
 import { useRouter } from 'vue-router';
 import Cookies from 'js-cookie';
-import { followUserApi, unfollowUserApi } from '@/api/user';
+import { followUserApi, unfollowUserApi } from '@/api/follow';
 
 const { currentRoute, push } = useRouter()
 
