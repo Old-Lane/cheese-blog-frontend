@@ -1,5 +1,5 @@
 <script setup lang='ts'>
-import { addFavoritesApi, getFavoritesApi, subscribeFavoritesApi } from '@/api/Favorites';
+import { addFavoritesApi, getFavoritesApi, subscribeFavoritesApi } from '@/api/Favorites/index';
 import { FavoritesType } from '@/api/Favorites/type';
 import { NewFavorites } from '@/components/NewFavorites';
 import SvgIcon from '@/components/SvgIcon.vue';

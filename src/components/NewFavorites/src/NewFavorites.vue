@@ -1,6 +1,6 @@
 <script setup lang='ts'>
-import { FavoritesType } from '@/api/favorites/type';
-import { addFavoritesApi } from '@/api/favorites';
+import { FavoritesType } from '@/api/Favorites/type';
+import { addFavoritesApi } from '@/api/Favorites/index';
 import Cookies from 'js-cookie';
 import { useEmitt } from '@/hook/web/useEmitt';
 

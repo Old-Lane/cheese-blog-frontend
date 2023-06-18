@@ -1,9 +1,9 @@
 <script setup lang='ts'>
-import { FavoritesType } from '@/api/favorites/type';
+import { FavoritesType } from '@/api/Favorites/type';
 import { getUserCardInfoApi } from '@/api/user';
 import { useRouter } from 'vue-router';
 import { timeago } from '@/utils/time';
-import { getFavoritesDetailApi } from '@/api/favorites';
+import { getFavoritesDetailApi } from '@/api/Favorites/index';
 import Cookies from 'js-cookie';
 
 const message: any = inject('message')
