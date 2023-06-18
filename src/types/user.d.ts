@@ -1,10 +1,10 @@
 declare type UserType = {
-  id: string,
-  avatar: string,
-  nickname: string,
-  username: string,
-  email: string,
-  role: string
+  id?: string,
+  avatar?: string,
+  nickname?: string,
+  username?: string,
+  email?: string,
+  role?: string
 };
 
 declare type UserCardType = {

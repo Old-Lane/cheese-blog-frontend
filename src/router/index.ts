@@ -66,6 +66,11 @@ const routes: Array<RouteRecordRaw> = [
                 ]
             },
             {
+                path: 'collection/:id',
+                name: 'Collection',
+                component: () => import('@/views/Collection/index.vue')
+            },
+            {
                 path: 'setting',
                 name: 'Setting',
                 component: () => import('@/views/Setting/index.vue'),

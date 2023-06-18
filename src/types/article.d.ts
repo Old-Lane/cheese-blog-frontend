@@ -18,6 +18,7 @@ declare type Article = {
   userId?: string,
   author?: string,
   isLiked?: boolean
+  user?: UserType
 }
 
 declare type ArticleType = {

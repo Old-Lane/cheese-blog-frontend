@@ -42,6 +42,8 @@ const tofans = () => {
 const handleLogout = () => {
   logout().then(res => {
     Cookies.remove('token')
+    Cookies.remove('userInfo')
+    Cookies.remove('uid')
     push('/login')
     setIsLogin(false)
   })

@@ -1,32 +1,25 @@
 <script setup lang='ts'>
-import { addFavoritesApi, getFavoritesApi } from '@/api/favorites';
+import { addFavoritesApi, getFavoritesApi, subscribeFavoritesApi } from '@/api/favorites';
 import { FavoritesType } from '@/api/favorites/type';
+import { NewFavorites } from '@/components/NewFavorites';
 import SvgIcon from '@/components/SvgIcon.vue';
+import { useEmitt } from '@/hook/web/useEmitt';
 import Cookies from 'js-cookie';
 import { useRouter } from 'vue-router';
 
 const { push, currentRoute } = useRouter()
-
 const message: any = inject('message')
-const isLogin = ref(Cookies.get('token'))
-const isShowModal = ref(false)
-const newFavorites = ref<FavoritesType>({
-  visibility: 1
-})
+
+const isMyHome = ref(JSON.parse((Cookies.get('userInfo') || '{}')).id === currentRoute.value.params.uid)
+
 const favorites = ref<Array<FavoritesType>>([])
 const pageInfo = ref({
   userId: currentRoute.value.params.uid,
   currentPage: '1',
   pageSize: '5'
 })
-
-const rules = ref({
-  name: {
-    required: true,
-    trigger: ['blur', 'input'],
-    message: '请输入收藏夹名称'
-  }
-})
+const modalTitle = ref('新建收藏夹')
+const tempFavorites = ref<FavoritesType>({})
 
 onMounted(() => {
   getFavorites()
@@ -38,31 +31,35 @@ const getFavorites = () => {
   })
 }
 
-const changeVisibility = (e: Event) => {
-  newFavorites.value.visibility = parseInt((e.target as HTMLInputElement).value)
-}
-
-const addFavorites = () => {
-  if (!Cookies.get('token')) {
-    message.error('您没有权限进行此操作，请先登录')
-  } else {
-    addFavoritesApi(newFavorites.value).then(res => {
-      message.success('新增收藏夹成功！')
-      isShowModal.value = false
-      favorites.value = []
-      getFavorites()
-      newFavorites.value = {
-        visibility: 1
-      }
-    })
-  }
+const toDetail = (id?: string) => {
+  push(`/collection/${id}`)
 }
 
 const openModal = () => {
   if (!Cookies.get('token')) {
     message.error('请先登录')
   } else {
-    isShowModal.value = true
+    useEmitt().emitter.emit('openCollectionModal')
+  }
+}
+
+useEmitt({
+  name: 'refreshCollection',
+  callback: () => {
+    favorites.value = []
+    getFavorites()
+  }
+})
+
+const subscribe = (id: string) => {
+  if (!Cookies.get('token')) {
+    push(`/login?redirect=${currentRoute.value.path}`)
+  } else {
+    subscribeFavoritesApi(id).then(res => {
+      message.success(res.message)
+      favorites.value = []
+      getFavorites()
+    })
   }
 }
 
@@ -71,7 +68,7 @@ const openModal = () => {
 <template>
   <div class="collect">
     <n-card class="py-5">
-      <div v-if="isLogin" class="flex justify-between items-center">
+      <div v-if="isMyHome" class="flex justify-between items-center">
         <div class="w-80">
           <n-tabs type="segment">
             <n-tab name="chap1">
@@ -91,62 +88,35 @@ const openModal = () => {
             <span class="text-2xl text-gray-400">这里空空如也~</span>
           </div>
         </div>
-        <div v-else v-for="(item, index) in favorites" :key="item.id" class="mt-8 cursor-pointer">
-          <div class="mb-2">
-            <h1 class="flex items-center">
-              <span class="font-700 mr-2 text-18px">{{ item.name }}</span>
-              <SvgIcon v-if="item.visibility === 0" name="password" normal="#c2c8d1" />
-            </h1>
-            <p class="leading-normal py-3">{{ item.description }}</p>
-            <div class="text-gray-400 flex items-center">
-              <span>{{ item.updateTime }} 更新</span>
-              <span class="mx-3">·</span>
-              <span>{{ item.articleCount }}篇文章</span>
-              <span class="mx-3">·</span>
-              <span>{{ item.subscribeCount }}订阅</span>
+        <div v-else v-for="(item, index) in favorites" :key="item.id" @click="toDetail(item.id)"
+          class="mt-8 cursor-pointer">
+          <div class="flex justify-between items-center">
+            <div class="mb-2">
+              <h1 class="flex items-center">
+                <span class="font-700 mr-2 text-18px">{{ item.name }}</span>
+                <SvgIcon v-if="item.visibility === 0" name="password" normal="#c2c8d1" />
+              </h1>
+              <p class="leading-normal py-3">{{ item.description }}</p>
+              <div class="text-gray-400 flex items-center">
+                <span>{{ item.updateTime }} 更新</span>
+                <span class="mx-3">·</span>
+                <span>{{ item.articleCount }} 篇文章</span>
+                <span class="mx-3">·</span>
+                <span>{{ item.subscribeCount }} 订阅</span>
+              </div>
+            </div>
+            <div v-if="!isMyHome" @click.stop="subscribe(item.id!)">
+              <n-button v-if="!item.isSubscribe" ghost type="primary" class="w-30">订阅</n-button>
+              <n-button color="#9ca3af" v-else ghost class="w-30">
+                <span class="text-gray-400">退订</span>
+              </n-button>
             </div>
           </div>
           <n-divider v-show="index !== favorites.length - 1" />
         </div>
       </div>
     </n-card>
-    <n-modal v-model:show="isShowModal" class="w-4/11" preset="card" title="新建收藏夹" size="huge" :bordered="false"
-      :segmented="{
-        content: 'soft',
-        footer: 'soft'
-      }">
-      <div>
-        <n-form ref="formRef" :model="newFavorites" :rules="rules" label-placement="left" label-width="auto"
-          require-mark-placement="right-hanging" size="medium" :style="{
-            maxWidth: '640px'
-          }">
-          <n-form-item label="名称" path="name">
-            <n-input v-model:value="newFavorites.name" placeholder="请输入收藏夹名称" />
-          </n-form-item>
-          <n-form-item label="描述" path="description">
-            <n-input type='textarea' rows="5" v-model:value="newFavorites.description" placeholder="请输入收藏夹描述（选填）" />
-          </n-form-item>
-        </n-form>
-        <div class="flex flex-col">
-          <div class="flex items-center mb-3">
-            <n-radio :checked="newFavorites.visibility === 1" :value="1" @change="changeVisibility">公开</n-radio>
-            <span class="text-gray-400 text-xl">当其他人关注此收藏夹后不可再更改为隐私</span>
-          </div>
-          <div class="flex items-center">
-            <n-radio :checked="newFavorites.visibility === 0" :value="0" @change="changeVisibility">隐私</n-radio>
-            <span class="text-gray-400 text-xl">仅自己可见此收藏夹</span>
-          </div>
-        </div>
-      </div>
-      <template #footer>
-        <div class="float-right">
-          <n-button @click="isShowModal = false" strong secondary type="primary" class="mr-5 w-30">
-            取消
-          </n-button>
-          <n-button @click="addFavorites" :disabled="!newFavorites.name" strong type="primary" class="w-30">确定</n-button>
-        </div>
-      </template>
-    </n-modal>
+    <NewFavorites :title="modalTitle" :favorites="''" />
   </div>
 </template>
 

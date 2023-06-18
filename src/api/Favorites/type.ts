@@ -8,4 +8,7 @@ export type FavoritesType = {
   subscribeCount?: string
   visibility?: number
   updateTime?: string
+  user?: UserType
+  articles?: Array<Article>
+  isSubscribe?: boolean
 }

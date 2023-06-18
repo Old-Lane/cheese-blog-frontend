@@ -15,7 +15,8 @@ const whiteList = [
     'PersonalColumn',
     'PersonalFriends',
     'PersonalFans',
-    'PersonalCollect'
+    'PersonalCollect',
+    'Collection'
 ] // 不重定向白名单
 const isLogin = Cookies.get('token')
 

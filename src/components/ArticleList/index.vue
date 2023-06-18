@@ -138,7 +138,7 @@ useEmitt({
             object-fit="cover" preview-disabled />
         </div>
       </div>
-      <n-divider />
+      <n-divider/>
     </div>
 
   </div>
