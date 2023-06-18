@@ -1,6 +1,6 @@
 <script setup lang='ts'>
-import { addFavoritesApi, getFavoritesApi, subscribeFavoritesApi } from '@/api/favorites';
-import { FavoritesType } from '@/api/favorites/type';
+import { addFavoritesApi, getFavoritesApi, subscribeFavoritesApi } from '@/api/Favorites';
+import { FavoritesType } from '@/api/Favorites/type';
 import { NewFavorites } from '@/components/NewFavorites';
 import SvgIcon from '@/components/SvgIcon.vue';
 import { useEmitt } from '@/hook/web/useEmitt';
